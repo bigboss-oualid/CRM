@@ -1,5 +1,6 @@
 {
     "devDependencies": {
+        "@babel/preset-react": "^7.10.4",
         "@symfony/webpack-encore": "^0.30.2",
         "core-js": "^3.0.0",
         "regenerator-runtime": "^0.13.2",
@@ -8,9 +9,16 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "dev-server": "encore dev-server",
+        "dev-server": "encore dev-server --port 8080",
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "axios": "^0.18.1",
+        "moment": "^2.27.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-router-dom": "^5.2.0"
     }
 }
