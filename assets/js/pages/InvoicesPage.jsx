@@ -124,8 +124,12 @@ const InvoicesPage = () => {
                 )}
                 </tbody>
             </table>
-            <Pagination currentPage={currentPage} itemsPerPage={itemsPerPage} onPageChanged={handlePageChange}
-                        length={filteredInvoices.length}/>
+            {itemsPerPage < filteredInvoices.length && <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                onPageChanged={handlePageChange}
+                length={filteredInvoices.length}
+            />}
         </>
     );
 };
