@@ -35,7 +35,7 @@ const Navbar = ({history}) => {
                     {(!isAuthenticated && (
                         <>
                             <li className="nav-item">
-                                <NavLink to="#" className="nav-link">
+                                <NavLink to="/register" className="nav-link">
                                     Neu anmelden
                                 </NavLink>
                             </li>

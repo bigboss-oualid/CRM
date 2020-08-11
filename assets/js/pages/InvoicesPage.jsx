@@ -1,5 +1,6 @@
 import moment from "moment";
 import React, {useEffect, useState} from 'react';
+import {Link} from "react-router-dom";
 import Pagination from "../components/Pagination";
 import InvoicesAPI from "../services/invoicesAPI";
 
@@ -82,7 +83,10 @@ const InvoicesPage = () => {
 
     return (
         <>
-            <h1>Liste der Rechnungen</h1>
+            <div className="mb-3 d-flex justify-content-between align-items-center">
+                <h1>Liste der Rechnungen</h1>
+                <Link to="/invoices/new" className="btn btn-primary">Rechnung erstellen</Link>
+            </div>
 
             <div className="form-group">
                 <input type="text" onChange={handleSearch} value={search} className="form-control"
@@ -112,9 +116,14 @@ const InvoicesPage = () => {
                             <span
                                 className={"badge badge-" + STATUS_CLASSES[invoice.status]}>{STATUS_LABELS[invoice.status]}</span>
                         </td>
-                        <td className="text-center">{invoice.amount.toLocaleString("de-DE")}</td>
+                        <td className="text-center">{invoice.amount.toLocaleString("de-DE")} €</td>
                         <td>
-                            <button className="btn btn-sm btn-primary mr-1">Bearbeiten</button>
+                            <Link
+                                to={"/invoices/" + invoice.id}
+                                className="btn btn-sm btn-primary mr-1"
+                            >
+                                Bearbeiten
+                            </Link>
                             <button className="btn btn-sm btn-danger" onClick={() => handleDelete(invoice.id)}
                             >
                                 Löschen
