@@ -6,8 +6,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Repository\InvoiceRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
-use \DateTimeInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -42,7 +42,6 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
-     * @Assert\NotBlank(message="The invoice amount is required!")
      * @Assert\Type(type="numeric", message="The invoice amount must be numeric!")
      */
     private $amount;
@@ -100,7 +99,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount($amount): self
+    public function setAmount(float $amount): self
     {
         $this->amount = $amount;
 
@@ -112,7 +111,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt($sentAt): self
+    public function setSentAt(DateTimeInterface $sentAt): self
     {
         $this->sentAt = $sentAt;
 
@@ -148,7 +147,7 @@ class Invoice
         return $this->invoiceNumber;
     }
 
-    public function setInvoiceNumber($invoiceNumber): self
+    public function setInvoiceNumber(int $invoiceNumber): self
     {
         $this->invoiceNumber = $invoiceNumber;
 

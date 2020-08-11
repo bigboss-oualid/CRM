@@ -42,24 +42,24 @@ class Customer
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="The customer first name is required!")
-     * @Assert\Length(min=3, minMessage="The first name must be between 3 and 255 characters!", max=255, maxMessage="the first name must be between 3 and 255 characters")
+     * @Assert\Length(min=3, minMessage="The field must be between 3 and 255 characters!", max=255, maxMessage="The field must be between 3 and 255 characters!")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="The customer last name is required!")
-     * @Assert\Length(min=3, minMessage="The last name must be between 3 and 255 characters!", max=255,maxMessage="the last name must be between 3 and 255 characters")
+     * @Assert\Length(min=3, minMessage="The field must be between 3 and 255 characters!", max=255,maxMessage="The field must be between 3 and 255 characters!")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read"})
-     * @Assert\NotBlank(message="The customer email is required!")
      * @Assert\Email(message="The email address must have a valid format!")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $email;
 
@@ -95,9 +95,13 @@ class Customer
      */
     public function getTotalAmount(): float
     {
-        return array_reduce($this->invoices->toArray(), function ($total, Invoice $invoice) {
-            return $total + $invoice->getAmount();
-        }, 0);
+        return array_reduce(
+            $this->invoices->toArray(),
+            function (float $total, Invoice $invoice) {
+                return $total + $invoice->getAmount();
+            },
+            0
+        );
     }
 
     /**
@@ -107,9 +111,13 @@ class Customer
      */
     public function getUnpaidAmount(): float
     {
-        return array_reduce($this->invoices->toArray(), function ($total, Invoice $invoice) {
-            return $total + ($invoice->getStatus() === 'SENT' ? $invoice->getAmount() : 0);
-        },0);
+        return array_reduce(
+            $this->invoices->toArray(),
+            function (float $total, Invoice $invoice) {
+                return $total + ($invoice->getStatus() === 'SENT' ? $invoice->getAmount() : 0);
+            },
+            0
+        );
     }
 
     public function getId(): ?int
