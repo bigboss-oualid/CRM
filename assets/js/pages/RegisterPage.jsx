@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 import Field from "../components/forms/Field";
 import UserApi from "../services/usersAPI";
 
@@ -37,15 +38,15 @@ const RegisterPage = ({history}) => {
         if (user.password !== user.passwordConfirm) {
             apiErrors.passwordConfirm = "Ihr bestätigtes Passwort stimmt nicht mit dem ursprünglichen Passwort überein!";
             setErrors(apiErrors);
+            toast.error("Fehler in Ihrem Formular 😥");
             return;
         }
         try {
             await UserApi.register(user);
             setErrors({});
-            //TODO : Flash success
+            toast.success("Sie sind gerade registriert, Sie können sich anmelden 🙂");
             history.replace("/login");
         } catch (error) {
-            console.log(error.response);
             const {violations} = error.response.data;
             if (violations) {
                 violations.forEach(({propertyPath, message}) => {
@@ -57,12 +58,10 @@ const RegisterPage = ({history}) => {
                         message = "Die E-Mail-Adresse muss ein gültiges Format haben!";
                     }
                     apiErrors[propertyPath] = message;
-                    //TODO : Flash Errors
                 });
                 setErrors(apiErrors);
             }
-
-            //TODO : Flash success
+            toast.error("Fehler in Ihrem Formular 😥");
         }
     };
 

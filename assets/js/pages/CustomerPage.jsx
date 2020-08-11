@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 import Field from "../components/forms/Field";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 import CustomersAPI from "../services/customersAPI";
 
 
@@ -22,6 +24,8 @@ const CustomerPage = ({match, history}) => {
         company: ""
     });
 
+    const [loading, setLoading] = useState(false);
+
     const [editing, setEditing] = useState(false);
 
     //Get customer through his ID
@@ -29,8 +33,9 @@ const CustomerPage = ({match, history}) => {
         try {
             const {firstName, lastName, email, company} = await CustomersAPI.find(id);
             setCustomer({firstName, lastName, email, company});
+            setLoading(false);
         } catch (error) {
-            // TODO : Flash error notification
+            toast.error("Der angeforderte Kunde kann nicht geladen werden");
             history.replace("/customers");
         }
     };
@@ -38,6 +43,7 @@ const CustomerPage = ({match, history}) => {
     // Customer loading if necessary when loading the component or changing the identifier
     useEffect(() => {
         if (id !== "new") {
+            setLoading(true);
             setEditing(true);
             fetchCustomer(id);
         }
@@ -52,13 +58,14 @@ const CustomerPage = ({match, history}) => {
     const handleSubmit = async event => {
         event.preventDefault();
         try {
+            setErrors({});
+
             if (editing) {
                 await CustomersAPI.update(id, customer);
-                setErrors({});
-                // TODO : Flash success
+                toast.success(`Der Kunde n° ${id} wurde geändert`);
             } else {
                 await CustomersAPI.create(customer);
-                // TODO : Flash success notification
+                toast.success("Der Kunde wurde gespeichert");
                 history.replace("/customers");
             }
         } catch ({response}) {
@@ -74,7 +81,7 @@ const CustomerPage = ({match, history}) => {
                         message = "Die E-Mail Adresse muss ein gültiges Format haben!";
                     }
                     apiErrors[propertyPath] = message;
-                    //TODO : Flash Errors
+                    toast.error("Fehler in Ihrem Formular!");
                 });
                 setErrors(apiErrors);
             }
@@ -84,46 +91,50 @@ const CustomerPage = ({match, history}) => {
         <>
             {!editing && <h1>Kunden erstellen</h1> || <h1>Kunden Daten Ändern</h1>}
 
-            <form onSubmit={handleSubmit}>
-                <Field
-                    name="lastName"
-                    label="Nachname"
-                    placeholder="Nachname des Kunden"
-                    value={customer.lastName}
-                    onChange={handleChange}
-                    error={errors.lastName}
-                />
-                <Field
-                    name="firstName"
-                    label="Vorname"
-                    placeholder="Vorname des Kunden"
-                    value={customer.firstName}
-                    onChange={handleChange}
-                    error={errors.firstName}
-                />
-                <Field
-                    name="email"
-                    label="email"
-                    placeholder="E-mail Adresse des Kunden"
-                    type="email"
-                    value={customer.email}
-                    onChange={handleChange}
-                    error={errors.email}
-                />
-                <Field
-                    name="company"
-                    label="Unternehmen"
-                    placeholder="Unternehmen des Kunden"
-                    value={customer.company}
-                    onChange={handleChange}
-                    error={errors.company}
-                />
+            {loading && <FormContentLoader/>}
 
-                <div className="form-group">
-                    <button className="btn btn-success">Speichern</button>
-                    <Link to="/customers" className="btn btn-link">Zurück zur Kundenliste</Link>
-                </div>
-            </form>
+            {!loading && (
+                <form onSubmit={handleSubmit}>
+                    <Field
+                        name="lastName"
+                        label="Nachname"
+                        placeholder="Nachname des Kunden"
+                        value={customer.lastName}
+                        onChange={handleChange}
+                        error={errors.lastName}
+                    />
+                    <Field
+                        name="firstName"
+                        label="Vorname"
+                        placeholder="Vorname des Kunden"
+                        value={customer.firstName}
+                        onChange={handleChange}
+                        error={errors.firstName}
+                    />
+                    <Field
+                        name="email"
+                        label="email"
+                        placeholder="E-mail Adresse des Kunden"
+                        type="email"
+                        value={customer.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                    />
+                    <Field
+                        name="company"
+                        label="Unternehmen"
+                        placeholder="Unternehmen des Kunden"
+                        value={customer.company}
+                        onChange={handleChange}
+                        error={errors.company}
+                    />
+
+                    <div className="form-group">
+                        <button className="btn btn-success">Speichern</button>
+                        <Link to="/customers" className="btn btn-link">Zurück zur Kundenliste</Link>
+                    </div>
+                </form>
+            )}
         </>
     );
 };

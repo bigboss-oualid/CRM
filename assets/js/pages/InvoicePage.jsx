@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 import Field from "../components/forms/Field";
 import Select from "../components/forms/Select";
+import FormContentLoader from "../components/loaders/FormContentLoader";
 import CustomersAPI from "../services/customersAPI";
 import InvoicesAPI from "../services/invoicesAPI";
 
@@ -13,7 +15,8 @@ const InvoicePage = ({match, history}) => {
     const [invoice, setInvoice] = useState({
         amount: "",
         customer: "",
-        status: "SENT"
+        status: "SENT",
+        invoiceNumber: ""
     });
 
     const [customers, setCustomers] = useState([]);
@@ -23,16 +26,18 @@ const InvoicePage = ({match, history}) => {
         customer: "",
         status: ""
     });
+    const [loading, setLoading] = useState(true);
 
     //Get customers
     const fetchCustomers = async () => {
         try {
             const data = await CustomersAPI.findAll();
             setCustomers(data);
+            setLoading(false);
             //If we add amount without change customer and status, we add a copy of invoice and add first customer in our array data
             if (!invoice.customer) setInvoice({...invoice, customer: data[0].id});
         } catch (error) {
-            // TODO : Flash error notification
+            toast.error("Kundenliste kann nicht geladen werden!");
             history.replace("/invoices");
         }
     };
@@ -41,10 +46,11 @@ const InvoicePage = ({match, history}) => {
     const fetchInvoice = async () => {
         try {
             //Extract data to give only customer ID instate of customer as object
-            const {amount, status, customer} = await InvoicesAPI.find(id);
-            setInvoice({amount, status, customer: customer.id});
+            const {amount, status, invoiceNumber, customer} = await InvoicesAPI.find(id);
+            setInvoice({amount, status, invoiceNumber, customer: customer.id});
+            setLoading(false);
         } catch (error) {
-            //TODO: Flash error
+            toast.error("Die angeforderte Rechnung kann nicht geladen werden");
             history.replace("/invoices");
         }
     };
@@ -72,12 +78,12 @@ const InvoicePage = ({match, history}) => {
         try {
             if (id === "new") {
                 await InvoicesAPI.create(invoice);
-                // TODO: Flash notification success
+                toast.success("Die Rechnung wurde gespeichert");
                 history.replace("/invoices");
             } else {
                 await InvoicesAPI.update(id, invoice);
                 setErrors({});
-                // TODO: Flash notification success
+                toast.success(`Die Rechnung n° ${invoice.invoiceNumber} wurde geändert`);
             }
 
         } catch ({response}) {
@@ -89,7 +95,7 @@ const InvoicePage = ({match, history}) => {
                         message = "Der Rechnungsbetrag muss numerisch sein!";
                     }
                     apiErrors[propertyPath] = message;
-                    //TODO : Flash Errors
+                    toast.error("Fehler in Ihrem Formular!");
                 });
                 setErrors(apiErrors);
             }
@@ -100,47 +106,51 @@ const InvoicePage = ({match, history}) => {
         <>
             {id === "new" && <h1>Rechnung erstellen</h1> || <h1>Rechnung ändern</h1>}
 
-            <form onSubmit={handleSubmit}>
-                <Field
-                    name="amount"
-                    type="number"
-                    label="Betrag"
-                    placeholder="Rechnung Betrag"
-                    value={invoice.amount}
-                    onChange={handleChange}
-                    error={errors.amount}
-                />
+            {loading && <FormContentLoader/>}
 
-                <Select
-                    name="customer"
-                    label="Kunde"
-                    value={invoice.customer}
-                    error={errors.customer}
-                    onChange={handleChange}
-                >
-                    {customers.map(customer => (
-                        <option key={customer.id} value={customer.id}>
-                            {customer.firstName} {customer.lastName}
-                        </option>
-                    ))}
-                </Select>
+            {!loading && (
+                <form onSubmit={handleSubmit}>
+                    <Field
+                        name="amount"
+                        type="number"
+                        label="Betrag"
+                        placeholder="Rechnung Betrag"
+                        value={invoice.amount}
+                        onChange={handleChange}
+                        error={errors.amount}
+                    />
 
-                <Select
-                    name="status"
-                    label="Status"
-                    value={invoice.status}
-                    error={errors.status}
-                    onChange={handleChange}
-                >
-                    <option value="SENT">Gesendet</option>
-                    <option value="PAID">Bezahlt</option>
-                    <option value="CANCELLED">Storniert</option>
-                </Select>
-                <div className="form-group">
-                    <button className="btn btn-success">Speichern</button>
-                    <Link to="/invoices" className="btn btn-link">Zurück zur Rechnungsliste</Link>
-                </div>
-            </form>
+                    <Select
+                        name="customer"
+                        label="Kunde"
+                        value={invoice.customer}
+                        error={errors.customer}
+                        onChange={handleChange}
+                    >
+                        {customers.map(customer => (
+                            <option key={customer.id} value={customer.id}>
+                                {customer.firstName} {customer.lastName}
+                            </option>
+                        ))}
+                    </Select>
+
+                    <Select
+                        name="status"
+                        label="Status"
+                        value={invoice.status}
+                        error={errors.status}
+                        onChange={handleChange}
+                    >
+                        <option value="SENT">Gesendet</option>
+                        <option value="PAID">Bezahlt</option>
+                        <option value="CANCELLED">Storniert</option>
+                    </Select>
+                    <div className="form-group">
+                        <button className="btn btn-success">Speichern</button>
+                        <Link to="/invoices" className="btn btn-link">Zurück zur Rechnungsliste</Link>
+                    </div>
+                </form>
+            )}
         </>
     );
 };

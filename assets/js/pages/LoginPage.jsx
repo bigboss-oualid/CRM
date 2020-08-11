@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+import {toast} from "react-toastify";
 import Field from "../components/forms/Field";
 import AuthContext from "../contexts/AuthContext";
 import AuthAPI from "../services/authAPI";
@@ -33,9 +34,11 @@ const LoginPage = ({history}) => {
             await AuthAPI.authenticate(credentials);
             setError("");
             setIsAuthenticated(true);
+            toast.success("Sie sind jetzt angemeldet !");
             history.replace("/customers");
         } catch (error) {
             setError("Es gibt kein Konto mit dieser Adresse oder die Informationen stimmen nicht überein");
+            toast.error("Ein Fehler ist aufgetreten!");
         }
     };
     return (

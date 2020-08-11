@@ -8,6 +8,8 @@
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {HashRouter, Route, Switch, withRouter} from "react-router-dom";
+import {toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
 import Navbar from "./components/Navbar";
@@ -57,6 +59,7 @@ const App = () => {
                     </Switch>
                 </main>
             </HashRouter>
+            <ToastContainer position={toast.POSITION.BOTTOM_LEFT}/>
         </AuthContext.Provider>
     );
 };
