@@ -147,7 +147,7 @@ class Invoice
         return $this->invoiceNumber;
     }
 
-    public function setInvoiceNumber(int $invoiceNumber): self
+    public function defineInvoiceNumber(int $invoiceNumber): self
     {
         $this->invoiceNumber = $invoiceNumber;
 
