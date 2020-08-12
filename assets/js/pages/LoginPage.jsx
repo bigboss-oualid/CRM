@@ -34,7 +34,7 @@ const LoginPage = ({history}) => {
             await AuthAPI.authenticate(credentials);
             setError("");
             setIsAuthenticated(true);
-            toast.success("Sie sind jetzt angemeldet !");
+            toast.info("Sie sind jetzt angemeldet !");
             history.replace("/customers");
         } catch (error) {
             setError("Es gibt kein Konto mit dieser Adresse oder die Informationen stimmen nicht überein");

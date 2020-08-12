@@ -32,7 +32,7 @@ const RegisterPage = ({history}) => {
     // Manage form submission
     const handleSubmit = async event => {
         event.preventDefault();
-        //TODO : Optimize errors to syncronize confirm password with other inputs errors
+        //TODO : Optimize errors to synchronize confirm password with other inputs errors
         const apiErrors = {};
 
         if (user.password !== user.passwordConfirm) {

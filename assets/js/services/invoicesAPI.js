@@ -1,32 +1,91 @@
 import axios from "axios";
+import {INVOICES_API} from "../config";
+import Cache from "./cache";
 
-function findAll() {
+
+async function findAll() {
+    const cachedInvoices = await Cache.get("invoices");
+
+    if (cachedInvoices) return cachedInvoices;
+
     return axios
-        .get("http://127.0.0.1:8000/api/invoices")
+        .get(INVOICES_API)
         //Get invoices data from DB
-        .then(response => response.data['hydra:member']);
+        .then(response => {
+            const invoices = response.data['hydra:member'];
+            Cache.set("invoices", invoices);
+
+            return invoices;
+        });
 }
 
-function find(id) {
-    return axios.get("http://localhost:8000/api/invoices/" + id).then(response => response.data);
+async function find(id) {
+    const cachedInvoice = await Cache.get("invoices." + id);
+
+    if (cachedInvoice) return cachedInvoice;
+
+    return axios
+        .get(INVOICES_API + "/" + id)
+        .then(response => {
+            const invoice = response.data;
+
+            Cache.set("invoices." + id, invoice);
+
+            return invoice;
+        });
 }
 
 function create(invoice) {
-    return axios.post("http://localhost:8000/api/invoices", {
-        ...invoice,
-        customer: `/api/customers/${invoice.customer}`
-    });
+    return axios
+        .post(INVOICES_API, {
+            ...invoice,
+            customer: `/api/customers/${invoice.customer}`
+        })
+        .then(async response => {
+            const cachedInvoices = await Cache.get("invoices");
+
+            if (cachedInvoices) {
+                Cache.set("invoices", [response.data, ...cachedInvoices]);
+            }
+
+            return response;
+        });
 }
 
 function update(id, invoice) {
-    return axios.put("http://localhost:8000/api/invoices/" + id, {
+    return axios.put(INVOICES_API + "/" + id, {
         ...invoice,
         customer: `/api/customers/${invoice.customer}`
-    });
+    })
+        .then(async response => {
+
+            const cachedInvoices = await Cache.get("invoices");
+            const cachedInvoice = await Cache.get("invoices." + id);
+
+            if (cachedInvoice) Cache.set("invoices." + id, response.data);
+
+
+            if (cachedInvoices) {
+                const index = cachedInvoices.findIndex(i => i.id === +id);
+                cachedInvoices[index] = response.data;
+            }
+
+            return response;
+        });
 }
 
 function deleteInvoice(id) {
-    axios.delete("http://127.0.0.1:8000/api/invoices/" + id);
+    return axios
+        .delete(INVOICES_API + "/" + id)
+        .then(async response => {
+            const cachedInvoices = await Cache.get("invoices");
+
+            if (cachedInvoices) {
+                Cache.set("invoices", cachedInvoices.filter(i => i.id !== id));
+            }
+
+            return response;
+        });
 }
 
 //when I export these file i create an object with property findAll, that present my function findAll()

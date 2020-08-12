@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
 import TableLoader from "../components/loaders/TableLoader";
 import Pagination from "../components/Pagination";
+import {INVOICES_PER_PAGE} from "../config";
 import InvoicesAPI from "../services/invoicesAPI";
 
 
@@ -23,7 +24,7 @@ const InvoicesPage = () => {
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
-    const itemsPerPage = 10;
+    const itemsPerPage = INVOICES_PER_PAGE;
     const [loading, setLoading] = useState(true);
 
     //Get invoices from Api
@@ -50,9 +51,9 @@ const InvoicesPage = () => {
         setInvoices(invoices.filter(invoice => invoice.id !== id));
 
         try {
+            const {invoiceNumber} = await InvoicesAPI.find(id);
             await InvoicesAPI.delete(id);
-            //TODO : Replace id with invoice.invoiceNumber
-            toast.success(`Die Rechnung n° ${id} wurde gelöscht`);
+            toast.success(`Die Rechnung n° ${invoiceNumber} wurde gelöscht`);
         } catch (error) {
             toast.error("Ein Fehler ist aufgetreten!");
             setInvoices(originalInvoices);
@@ -102,7 +103,7 @@ const InvoicesPage = () => {
             <table className="table table-hover">
                 <thead>
                 <tr>
-                    <th>Rech.Nr:</th>
+                    <th>Nr :</th>
                     <th>Kunde</th>
                     <th className="text-center">Gesendet am</th>
                     <th className="text-center">Status</th>

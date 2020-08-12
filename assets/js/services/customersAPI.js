@@ -1,30 +1,87 @@
 import axios from "axios";
+import {CUSTOMERS_API} from "../config";
+import Cache from "./cache";
 
-function findAll() {
+
+async function findAll() {
+    const cachedCustomers = await Cache.get("customers");
+
+    if (cachedCustomers) return cachedCustomers;
+
     return axios
-        .get("http://127.0.0.1:8000/api/customers")
+        .get(CUSTOMERS_API)
         //Get costumers data from DB
-        .then(response => response.data['hydra:member']);
+        .then(response => {
+            const customers = response.data['hydra:member'];
+            Cache.set("customers", customers);
+
+            return customers;
+        });
 }
 
-function find(id) {
+async function find(id) {
+    const cachedCustomer = await Cache.get("customers." + id);
+
+    if (cachedCustomer) return cachedCustomer;
+
     return axios
-        .get("http://localhost:8000/api/customers/" + id)
-        .then(response => response.data);
+        .get(CUSTOMERS_API + "/" + id)
+        .then(response => {
+            const customer = response.data;
+
+            Cache.set("customers." + id, customer);
+
+            return customer;
+        });
 }
 
 function deleteCustomer(id) {
-    axios.delete("http://127.0.0.1:8000/api/customers/" + id);
+    return axios
+        .delete(CUSTOMERS_API + "/" + id)
+        .then(async response => {
+            const cachedCustomers = await Cache.get("customers");
+
+            if (cachedCustomers) {
+                //Remove deleted customer from cache
+                Cache.set("customers", cachedCustomers.filter(c => c.id !== id));
+            }
+
+            return response;
+        });
 }
 
 function update(id, customer) {
-    return axios.put(
-        "http://localhost:8000/api/customers/" + id, customer
-    );
+    return axios
+        .put(CUSTOMERS_API + "/" + id, customer)
+        .then(async response => {
+            const cachedCustomers = await Cache.get("customers");
+            const cachedCustomer = await Cache.get("customers." + id);
+
+            if (cachedCustomer) Cache.set("customers." + id, response.data);
+
+            if (cachedCustomers) {
+                //Search in cache the index of modified Customer & give him the new values
+                const index = cachedCustomers.findIndex(c => c.id === +id);
+                cachedCustomers[index] = response.data;
+            }
+
+            return response;
+        });
 }
 
 function create(customer) {
-    return axios.post("http://localhost:8000/api/customers", customer);
+    return axios
+        .post(CUSTOMERS_API, customer)
+        .then(async response => {
+            const cachedCustomers = await Cache.get("customers");
+
+            if (cachedCustomers) {
+                //Get from Cache customers list & add the new created customer in the beginning of list
+                Cache.set("customers", [response.data, ...cachedCustomers]);
+            }
+
+            return response;
+        });
 }
 
 //when I export these file i create an object with property findAll, that present my function findAll()

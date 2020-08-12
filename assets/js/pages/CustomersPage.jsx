@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
 import TableLoader from "../components/loaders/TableLoader";
 import Pagination from "../components/Pagination";
+import {CUSTOMERS_PER_PAGE} from "../config";
 import CustomersAPI from "../services/customersAPI.js";
 
 
@@ -78,7 +79,7 @@ const CustomersPage = () => {
         setCurrentPage(1);
     };
 
-    const itemsPerPage = 10;
+    const itemsPerPage = CUSTOMERS_PER_PAGE;
     // Filter customers based on search
     const filteredCustomers = customers.filter(
         c =>
@@ -109,7 +110,7 @@ const CustomersPage = () => {
             <table className="table table-hover">
                 <thead>
                 <tr>
-                    <th>ID.</th>
+                    <th>ID</th>
                     <th>Kunde</th>
                     <th>Email</th>
                     <th>Unternehmen</th>
