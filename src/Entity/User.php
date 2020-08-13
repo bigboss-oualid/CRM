@@ -32,7 +32,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
-     * @Assert\NotBlank(message="The user email is required!")
+     * @Assert\NotBlank(message="The field is required!")
      * @Assert\Email(message="The email address must have a valid format!")
      */
     private $email;
@@ -45,23 +45,23 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank(message="The password is required!")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
-     * @Assert\NotBlank(message="The customer first name is required!")
-     * @Assert\Length(min=3, minMessage="The first name must be between 3 and 255 characters!", max=255, maxMessage="the first name must be between 3 and 255 characters")
+     * @Assert\Length(min=3, minMessage="The field must be between 3 and 255 characters!", max=255, maxMessage="The field must be between 3 and 255 characters")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
-     * @Assert\NotBlank(message="The customer last name is required!")
-     * @Assert\Length(min=3, minMessage="The last name must be between 3 and 255 characters!", max=255,maxMessage="the last name must be between 3 and 255 characters")
+     * @Assert\Length(min=3, minMessage="The field must be between 3 and 255 characters!", max=255,maxMessage="The field must be between 3 and 255 characters!")
+     * @Assert\NotBlank(message="The field is required!")
      */
     private $lastName;
 

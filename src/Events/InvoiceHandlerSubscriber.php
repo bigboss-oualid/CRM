@@ -29,7 +29,7 @@ class InvoiceHandlerSubscriber implements EventSubscriberInterface
         $this->invoiceRepository = $invoiceRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             kernelEvents::VIEW => ['handleInvoice', EventPriorities::PRE_VALIDATE],
@@ -54,7 +54,7 @@ class InvoiceHandlerSubscriber implements EventSubscriberInterface
             $user = $this->security->getUser();
             $nextInvoiceNumber = $this->invoiceRepository->findNextInvoiceNumber($user);
             /* @var User $user */
-            $invoice->setInvoiceNumber($nextInvoiceNumber);
+            $invoice->defineInvoiceNumber($nextInvoiceNumber);
             if (empty($invoice->getSentAt())) {
                 $invoice->setSentAt(new DateTime());
             }
