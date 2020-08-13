@@ -5,6 +5,7 @@ import {toast} from "react-toastify";
 import TableLoader from "../components/loaders/TableLoader";
 import Pagination from "../components/Pagination";
 import {INVOICES_PER_PAGE} from "../config";
+import CustomersAPI from "../services/customersAPI";
 import InvoicesAPI from "../services/invoicesAPI";
 
 
@@ -26,6 +27,7 @@ const InvoicesPage = () => {
     const [search, setSearch] = useState("");
     const itemsPerPage = INVOICES_PER_PAGE;
     const [loading, setLoading] = useState(true);
+    const [hasCostomers, setHasCostomers] = useState(false);
 
     //Get invoices from Api
     const fetchInvoices = async () => {
@@ -38,9 +40,19 @@ const InvoicesPage = () => {
         }
     };
 
+    const existCustomer = async () => {
+        try {
+            const data = await CustomersAPI.findAll();
+            data.length ? setHasCostomers(true) : setHasCostomers(false);
+        } catch (error) {
+            toast.error("Ein Fehler ist aufgetreten!");
+        }
+    };
+
     // Load invoices by loading component (page: InvoicesPage.jsx)
     useEffect(() => {
         fetchInvoices();
+        existCustomer();
     }, []);
 
     //Manage deleting a invoice
@@ -88,11 +100,25 @@ const InvoicesPage = () => {
         itemsPerPage
     );
 
+    const removeElement = () => {
+        document.getElementById("invoices-info").remove();
+    };
     return (
         <>
+            {!hasCostomers &&
+            <div id="invoices-info" className="text-center alert alert-warning">
+                <strong>Um neue Rechnung zu erstellen, Sie sollen mindestens einen Kund haben.</strong>
+                <button type="button" className="close">
+                    <span onClick={removeElement}>&times;</span>
+                </button>
+            </div>
+            }
+
             <div className="mb-3 d-flex justify-content-between align-items-center">
                 <h1 className="">Rechnungen</h1>
+                {hasCostomers &&
                 <Link to="/invoices/new" className="btn btn-primary">Rechnung erstellen</Link>
+                }
             </div>
 
             <div className="form-group">
