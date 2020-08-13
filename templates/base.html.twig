@@ -2,6 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <!-- adapt content to different media -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="shortcut icon" href="{{ asset('images/icon.ico') }}"/>
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>

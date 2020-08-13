@@ -57,7 +57,7 @@ const Pagination = ({currentPage, itemsPerPage, length, onPageChanged}) => {
                         className="page-link"
                         onClick={() => onPageChanged(currentPage - 1)}
                     >
-                        &laquo;
+                        <i className="fas fa-backward"></i>
                     </button>
                 </li>
                 {paginate(currentPage, pagesCount).map((page, key) =>
@@ -76,7 +76,7 @@ const Pagination = ({currentPage, itemsPerPage, length, onPageChanged}) => {
                         className="page-link"
                         onClick={() => onPageChanged(currentPage + 1)}
                     >
-                        &raquo;
+                        <i className="fas fa-forward"></i>
                     </button>
                 </li>
             </ul>

@@ -98,7 +98,7 @@ const CustomersPage = () => {
     return (
         <>
             <div className="mb-3 d-flex justify-content-between align-items-center">
-                <h1>Liste der Kunden</h1>
+                <h1>Kunden</h1>
                 <Link to="/customers/new" className="btn btn-primary">Kunden erstellen</Link>
             </div>
 
@@ -106,17 +106,17 @@ const CustomersPage = () => {
                 <input type="text" onChange={handleSearch} value={search} className="form-control"
                        placeholder="Suchen..."/>
             </div>
-
-            <table className="table table-hover">
+            <div className="table-responsive">
+                <table className="table table-hover table-bordered">
                 <thead>
-                <tr>
+                <tr className="table-dark table-borderless">
                     <th>ID</th>
                     <th>Kunde</th>
                     <th>Email</th>
                     <th>Unternehmen</th>
                     <th className="text-center">Rechnungen</th>
                     <th className="text-center">Gesamtsumme</th>
-                    <th></th>
+                    <th className="text-center"><i className="fas fa-cog"></i></th>
                 </tr>
                 </thead>
 
@@ -139,8 +139,8 @@ const CustomersPage = () => {
                                         {customer.invoices.length}
                                     </span>
                             </td>
-                            <td className="text-center text-warning font-weight-bold">{customer.totalAmount.toLocaleString('DE')} euro</td>
-                            <td>
+                            <td className="text-center text-warning font-weight-bold">{customer.totalAmount.toLocaleString('DE')} €</td>
+                            <td className="text-center">
                                 <button
                                     onClick={() => handleDelete(customer.id)}
                                     disabled={customer.invoices.length > 0} className="btn btn-sm btn-danger"
@@ -152,6 +152,7 @@ const CustomersPage = () => {
                     </tbody>
                 )}
             </table>
+            </div>
             {loading && <TableLoader/>}
             {itemsPerPage < filteredCustomers.length && <Pagination
                 currentPage={currentPage}
