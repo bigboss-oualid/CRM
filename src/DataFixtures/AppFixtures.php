@@ -56,7 +56,7 @@ class AppFixtures extends Fixture
                         ->setSentAt($faker->dateTimeBetween('-6 months'))
                         ->setStatus($faker->randomElement(['SENT', 'PAID', 'CANCELLED']))
                         ->setCustomer($customer)
-                        ->setInvoiceNumber($invoiceNumber++);
+                        ->defineInvoiceNumber($invoiceNumber++);
 
                     $manager->persist($invoice);
                 }
