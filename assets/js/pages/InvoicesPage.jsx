@@ -91,7 +91,7 @@ const InvoicesPage = () => {
     return (
         <>
             <div className="mb-3 d-flex justify-content-between align-items-center">
-                <h1>Liste der Rechnungen</h1>
+                <h1 className="">Rechnungen</h1>
                 <Link to="/invoices/new" className="btn btn-primary">Rechnung erstellen</Link>
             </div>
 
@@ -100,15 +100,17 @@ const InvoicesPage = () => {
                        placeholder="Suchen..."/>
             </div>
 
-            <table className="table table-hover">
+
+            <div className="table-responsive">
+                <table className="table table-hover table-bordered">
                 <thead>
-                <tr>
-                    <th>Nr :</th>
+                <tr className="table-dark table-borderless">
+                    <th>Nr.</th>
                     <th>Kunde</th>
                     <th className="text-center">Gesendet am</th>
                     <th className="text-center">Status</th>
                     <th className="text-center">Betrag</th>
-                    <th></th>
+                    <th className="text-center"><i className="fas fa-cog"></i></th>
                 </tr>
                 </thead>
                 {!loading && (
@@ -129,7 +131,7 @@ const InvoicesPage = () => {
                                         className={"badge badge-" + STATUS_CLASSES[invoice.status]}>{STATUS_LABELS[invoice.status]}</span>
                             </td>
                             <td className="text-center">{invoice.amount.toLocaleString("de-DE")} €</td>
-                            <td>
+                            <td className="text-center">
                                 <Link
                                     to={"/invoices/" + invoice.id}
                                     className="btn btn-sm btn-primary mr-1"
@@ -145,6 +147,7 @@ const InvoicesPage = () => {
                     </tbody>
                 )}
             </table>
+            </div>
 
             {loading && <TableLoader/>}
 
