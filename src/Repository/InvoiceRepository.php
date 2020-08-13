@@ -6,6 +6,7 @@ use App\Entity\Invoice;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)
@@ -22,15 +23,19 @@ class InvoiceRepository extends ServiceEntityRepository
 
     public function findNextInvoiceNumber(User $user)
     {
-        return $this->createQueryBuilder('i')
-            ->select('i.invoiceNumber')
-            ->join('i.customer', 'c')
-            ->where('c.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('i.invoiceNumber', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleScalarResult() + 1;
+        try{
+            return $this->createQueryBuilder('i')
+                    ->select('i.invoiceNumber')
+                    ->join('i.customer', 'c')
+                    ->where('c.user = :user')
+                    ->setParameter('user', $user)
+                    ->orderBy('i.invoiceNumber', 'DESC')
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getSingleScalarResult() + 1;
+        }catch(Exception $e){
+            return 1;
+        }
     }
 
     // /**
