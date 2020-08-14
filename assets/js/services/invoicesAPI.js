@@ -42,6 +42,7 @@ function create(invoice) {
             customer: `/api/customers/${invoice.customer}`
         })
         .then(async response => {
+            Cache.set("customers", null);
             const cachedInvoices = await Cache.get("invoices");
 
             if (cachedInvoices) {
@@ -78,6 +79,7 @@ function deleteInvoice(id) {
     return axios
         .delete(INVOICES_API + "/" + id)
         .then(async response => {
+            Cache.set("customers", null);
             const cachedInvoices = await Cache.get("invoices");
 
             if (cachedInvoices) {
