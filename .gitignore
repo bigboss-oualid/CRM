@@ -35,3 +35,4 @@
 /public/build/
 npm-debug.log
 ###< symfony/webpack-encore-bundle ###
+/.env

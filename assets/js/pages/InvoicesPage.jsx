@@ -27,7 +27,7 @@ const InvoicesPage = () => {
     const [search, setSearch] = useState("");
     const itemsPerPage = INVOICES_PER_PAGE;
     const [loading, setLoading] = useState(true);
-    const [hasCostomers, setHasCostomers] = useState(false);
+    const [hasCustomers, setHasCustomers] = useState(false);
 
     //Get invoices from Api
     const fetchInvoices = async () => {
@@ -43,7 +43,7 @@ const InvoicesPage = () => {
     const existCustomer = async () => {
         try {
             const data = await CustomersAPI.findAll();
-            data.length ? setHasCostomers(true) : setHasCostomers(false);
+            data.length ? setHasCustomers(true) : setHasCustomers(false);
         } catch (error) {
             toast.error("Ein Fehler ist aufgetreten!");
         }
@@ -51,8 +51,8 @@ const InvoicesPage = () => {
 
     // Load invoices by loading component (page: InvoicesPage.jsx)
     useEffect(() => {
-        fetchInvoices();
         existCustomer();
+        fetchInvoices();
     }, []);
 
     //Manage deleting a invoice
@@ -100,25 +100,34 @@ const InvoicesPage = () => {
         itemsPerPage
     );
 
-    const removeElement = () => {
-        document.getElementById("invoices-info").remove();
+    const info = document.getElementById("info");
+    const disableButton = (event) => {
+        if (!hasCustomers){
+            event.preventDefault();
+            info.classList.remove("d-none");
+            info.style.display = "block";
+            setTimeout(function(){
+                info.style.display = "none";
+            }, 10000);
+        }
     };
+
+    const hideInfo = () => {
+        info.style.display = "none";
+    };
+
     return (
         <>
-            {!hasCostomers &&
-            <div id="invoices-info" className="text-center alert alert-warning">
-                <strong>Um neue Rechnung zu erstellen, Sie sollen mindestens einen Kund haben.</strong>
-                <button type="button" className="close">
-                    <span onClick={removeElement}>&times;</span>
+            <div id="info" className="d-none text-center alert alert-warning">
+                <strong>Um neue Rechnung zu erstellen, sollen Sie mindestens einen Kund haben.</strong>
+                <button type="button" onClick={hideInfo} className="close">
+                    <span >&times;</span>
                 </button>
             </div>
-            }
 
             <div className="mb-3 d-flex justify-content-between align-items-center">
                 <h1 className="">Rechnungen</h1>
-                {hasCostomers &&
-                <Link to="/invoices/new" className="btn btn-primary">Rechnung erstellen</Link>
-                }
+                <Link to="/invoices/new" className="btn btn-primary" onClick={disableButton }>Rechnung erstellen</Link>
             </div>
 
             <div className="form-group">
