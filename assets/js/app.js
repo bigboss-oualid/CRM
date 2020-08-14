@@ -5,6 +5,12 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
+import $ from 'jquery';
+// create global $ and jQuery variables
+global.$ = global.jQuery = $;
+
+import 'bootstrap';
+
 import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import {HashRouter, Route, Switch, withRouter} from "react-router-dom";
