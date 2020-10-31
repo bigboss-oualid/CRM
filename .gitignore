@@ -26,7 +26,7 @@
 /.idea/
 
 ###> lexik/jwt-authentication-bundle ###
-#/config/jwt/*.pem
+/config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
 ###> symfony/webpack-encore-bundle ###
